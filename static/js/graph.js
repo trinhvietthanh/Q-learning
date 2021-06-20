@@ -6,18 +6,23 @@ canvas.height = window.innerHeight - 150;
 
 var ctx = canvas.getContext('2d');
 
+
 export default class Graph {
 	constructor() {
 		this.AdjList = new Map();
+		this.Graph = new Map();
 	}
 
 	addVertex(v) {
 		this.AdjList.set(v, []);
+		this.Graph.set(v.nodeName, [])
 	}
 
 	addEdge(start, end) {
 		this.AdjList.get(start).push(end);
 		this.AdjList.get(end).push(start);
+		this.Graph.get(start.nodeName).push(end.nodeName);
+		this.Graph.get(end.nodeName).push(start.nodeName);
 	}
 
 	dfs(startNode) {
@@ -89,19 +94,36 @@ export default class Graph {
 		// 	}
 		// }
 		// return ret;
+		var arr = []
+		for (let [key, value] of this.Graph) {
+			let s = key.charCodeAt(0) - 65;
+		  value.forEach(element => {
+				let e = element.charCodeAt(0) - 65;
+				arr.push("("+s+","+e+")");
+			});
+			
+		}		
+		console.log(arr);
 		var fd = new FormData(); 
-		fd.append( 'start', startNode);
-		fd.append('end', endNode);
-		fd.append('graph', this.AdjList);
-		$.ajax({
-			type: "post",
-			url: "/set-graph",
-			data: fd,
-			success: function()
-			{
-				console.log("ok");
-			}
-		});
+		fd.append( 'start', startNode.nodeName);
+		fd.append('end', endNode.nodeName);
+		fd.append('graph', arr)
+
+		// console.log(fd);
+		// $.ajax({
+		// 	type: "post",
+		// 	url: "/set-graph",
+		// 	data: fd,
+		// 	cache : false,
+		// 	processData: false,
+		// 	success: function()
+		// 	{
+		// 		console.log("ok");
+		// 	}
+		// });
+		var request = new XMLHttpRequest();
+		request.open("POST", "/set-graph");
+		request.send(fd);
 
 		$.get("/api/path/"+ 1+"/"+10, function( data ) {
 			console.log(data);
