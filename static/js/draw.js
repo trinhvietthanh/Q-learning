@@ -161,6 +161,8 @@ Q_learning.addEventListener('click', () => {
 	var startNode = nodeArray[index1];
 	var endNode = nodeArray[index2];
 	var Q_learning = g.Q_learning(startNode, endNode);
+	console.log(">>>>>>.");
+	console.log(Q_learning);
 	if (Q_learning[Q_learning.length - 1] != endNode.nodeName) {
 		var msg = `Best Fisrst Search Path: No Solution`;
 		showOperation(msg);

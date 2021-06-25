@@ -95,39 +95,46 @@ export default class Graph {
 		// }
 		// return ret;
 		var arr = []
+		let num =0;
 		for (let [key, value] of this.Graph) {
 			let s = key.charCodeAt(0) - 65;
 		  value.forEach(element => {
+				num++;
+				let weight = Math.floor(Math.random() * 11);
 				let e = element.charCodeAt(0) - 65;
-				arr.push("("+s+","+e+")");
+				arr.push({
+					"start" : s,
+					"end": e,
+					"weight": weight
+				});
 			});
 			
 		}		
+		var start = (startNode.nodeName).charCodeAt(0) - 65
+		var end = (endNode.nodeName).charCodeAt(0) - 65
+		var ret = [];
 		console.log(arr);
-		var fd = new FormData(); 
-		fd.append( 'start', startNode.nodeName);
-		fd.append('end', endNode.nodeName);
-		fd.append('graph', arr)
+		var data = {
+			"start" : start,
+			"end": end,
+			"graphs": arr
+		}
+		data = JSON.stringify(data)
+		console.log(data);
 
-		// console.log(fd);
-		// $.ajax({
-		// 	type: "post",
-		// 	url: "/set-graph",
-		// 	data: fd,
-		// 	cache : false,
-		// 	processData: false,
-		// 	success: function()
-		// 	{
-		// 		console.log("ok");
-		// 	}
-		// });
 		var request = new XMLHttpRequest();
 		request.open("POST", "/set-graph");
-		request.send(fd);
+		request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		request.send(data);
+		setTimeout(function() {
+			$.get("/api/path/"+ start+"/"+ end, function( data ) {
+				console.log(data);
+				ret = data;
+			});
+		}, 3000);
+		return ret;
 
-		$.get("/api/path/"+ 1+"/"+10, function( data ) {
-			console.log(data);
-		});
+	
 	}
 
 	fillNode(node, nodeColor = '#00BA6C', textColor = '#FFFFFF') {

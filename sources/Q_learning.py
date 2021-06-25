@@ -7,6 +7,7 @@ class Q_learning:
         self.R = np.matrix(np.zeros(shape=(states, action)))# reward table  
         self.Q_table = np.matrix(np.zeros(shape=(states, action)))
         self.Q_table -= 100
+        self.states = states
         self.gamma = gamma
         self.lr = lr 
         self.goal = goal
@@ -22,13 +23,17 @@ class Q_learning:
 
     def addReward(self):
         self.R-=100
+        print("start")
+        print(self.states)
+        print(self.goal)
         for node in self.G[self.goal]:
             self.R[node, self.goal] = 100
         for node in self.G.nodes:
             for x in self.G[node]:
                 if node != self.goal:
                     self.R[x, node] = -self.G[node][x]['weight']
-                if x != 10:  self.R[node, x] = -self.G[node][x]['weight']
+                    if x != self.goal:  
+                        self.R[node, x] = -self.G[node][x]['weight']
 
     def result(self):
         return self.Q_table
@@ -53,6 +58,6 @@ class Q_learning:
     
     def learn(self,er, episodes):
         for i in range(episodes):
-            start = np.random.randint(0, 11)
+            start = np.random.randint(0, self.states-1)
             next_node = self.select_action(start, er)
             self.UpdateQTable(start, next_node)

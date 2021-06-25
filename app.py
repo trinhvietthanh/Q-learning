@@ -3,8 +3,8 @@ from flask_restful import Api
 from resources.graphDefault import GraphDefault, Q_table
 from resources.stepSearch import StepSearch
 import mimetypes
-import random as rd
 import sources.env as env
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,18 +21,12 @@ def index():
     return render_template("index.html")
 @app.route("/set-graph", methods=['POST', 'GET'])
 def setGraph():
-    data =  request.data
-
-    # graph = data['graph']
-    end = request.form.get('end')
-    start = request.form.get('start')
-    graph = request.form.get('graph')
-    print(graph,end)
-    for i in graph:
-        w = rd.randint(0,22)
-        print(i)
-        # env.convertToEnv()
-    return "OK"
+    start = request.json['start']
+    end = request.json['end']
+    graph =  request.json['graphs']
+    env.convertToEnv(graph)
+    env.end = end
+    return "ok"
 
 api.add_resource(GraphDefault,'/api/get-graph')
 api.add_resource(Q_table, '/api/get-q-table')

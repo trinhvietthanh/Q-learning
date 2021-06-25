@@ -6,12 +6,14 @@ import json
 
 class GraphDefault(Resource):
     def get(self):
+
        result = json_graph.node_link_data(env.G)
        return result
 
 class Q_table(Resource):
     def get(self):
-        res = run(0.8, 0.8, 10, graph=env.G)
+        res = run(0.8, 0.8, env.end, graph=env.G)
+        print(res)
         res = res.tolist()
         return json.dumps(res)
 

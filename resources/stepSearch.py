@@ -1,7 +1,7 @@
 from flask_restful import Resource
 import numpy as np
 from sources.util import run
-from sources.env import G
+from sources import env
 import json
 
 class NpEncoder(json.JSONEncoder):
@@ -16,7 +16,7 @@ class NpEncoder(json.JSONEncoder):
             return super(NpEncoder, self).default(obj)
 
 def getPath(begin, end):
-    Q = run(0.8, 0.8, 10, graph=G)
+    Q = run(0.8, 0.8, end, graph=env.G)
     path = [begin]
     next_node = np.argmax(Q[begin,])
     path.append(next_node)
@@ -27,5 +27,6 @@ def getPath(begin, end):
 
 class StepSearch(Resource):
     def get(self, begin, end):
+        print(begin, end)
         path = getPath(begin, end)
         return json.dumps(path, cls=NpEncoder)
